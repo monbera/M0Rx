@@ -1,0 +1,25 @@
+#######################################
+# Syntax Coloring MyRc
+#######################################
+
+#######################################
+# Datatypes (KEYWORD1)
+#######################################
+
+
+#######################################
+# Methods and Functions (KEYWORD2)
+#######################################
+write_byte_data	KEYWORD2
+byte read_byte_data	KEYWORD2
+software_reset	KEYWORD2
+pwm_init	KEYWORD2
+set_pwm_freq	KEYWORD2
+set_pwm	KEYWORD2
+set_all_pwm	KEYWORD2
+set_dio	KEYWORD2
+
+#######################################
+# Constants (LITERAL1)
+#######################################
+
