@@ -14,14 +14,14 @@ Erforderliche Materialien:
   * Adafruit Feather M0 WiFi with ATWINC1500 + uFL
     (Pimoroni.com oder Adafruit.com)
   * Adafruit-8-channel-PWM-or-SERVO-featherwing
-  * LiPo Empfängerbatterie mind. 500mAh
+  * LiPo Empfängerbatterie mind. 3,7V 500mAh
   * Elko 500uF/10 V
   * Rechtwinkliche 4*3 Stiftleiste
   * Short Feather Male Headers - 12-pin and 16-pin Male Header Set
   * Short Feather Headers Kit - 12-pin and 16-pin Female Header Set
 
-## Aufbau des RC-Empängers
-Folgend Komponenten sind einzulöten:
+## Aufbau des RC-Empfängers
+Folgende Komponenten sind einzulöten:
 
   * Stiftleiste auf dem M0-Board
   * Buchsenleiste auf dem PWM-Board
@@ -33,18 +33,18 @@ Danach sind beide Boards zusammenzustecken. Man erhält einen sehr kompakten RC-
 
 ## Installation der Software
 
-Als erstes sollte man den Instruktionen des [Adafruit Tutorial](https://learn.adafruit.com/adafruit-feather-m0-wifi-atwinc1500) halten und alle erforderlichen Libraries des Boards installieren und die Funktionsweise mit einer einfachen Software testen.
+Als erstes sollte man den Instruktionen des [Adafruit Tutorial](https://learn.adafruit.com/adafruit-feather-m0-wifi-atwinc1500) folgen und alle erforderlichen Libraries des Boards installieren und die Funktionsweise mit einer einfachen Software testen.
 
 Mit der Software SimpleTest.ino kann man das Zusammenspiel der o.g. Komponenete testen. Dazu ist der Empfänger an Kanal 0 mit einem Servo zu verbinden. An einem anderen Kanal ist zwischen GND und +V die Servo Betriebspannung 5V..6V anzulegen (z.B. BEC) und das M0-Board mit dem Rechner zu verbinden (Arduino IDE). Nach dem Laden der SW bewegt sich der Servo jeweils nach einer Sekunde.
 
-Die Software des zur [RC Funkfernsteuerung](https://github.com/monbera/RC-Pi) kompatiblen Empängers besteht aus folgenden Komponenten:
+Die Software des zur [RC Funkfernsteuerung](https://github.com/monbera/RC-Pi) kompatiblen Empfängers besteht aus folgenden Komponenten:
 
   * M0Rx.ino - Hauptprogramm mit 'setup' und 'loop' Struktur der Arduino IDE. Im wesentlichen ist hier der UDP-Client implementiert
   * cfg.h - Konfiguration verschiedener Modelle und Kanäle und Passwort und SSID des lokalen Netzwerkes
 
 Im eigenen Sketchbook-Verzeichnis 'libraries' sind die beiden Bibliotheken 'PCA9685' und 'MyRC' jeweils in einem gleichnamigen Verzeichnis abzulegen. In 'PCA9685' sind die absolut notwendigen Prozeduren implementiert, die zum Ansteuern des PWM-Boards notwendig sind. In 'MyRC' sind Hilfsfunktionen zur Konvertierung und Berechnung implementiert.
 
-Alle zusätzlichen Informationen sind im Reposotory [RC Funkfernsteuerung](https://github.com/monbera/RC-Pi) beschrieben. 
+Alle zusätzlichen Informationen sind im Repository [RC Funkfernsteuerung](https://github.com/monbera/RC-Pi) beschrieben.
 
 
 # RC receiver with Adafruit-Feather-M0-WiFi-ATWINC1500+uFL
@@ -61,7 +61,7 @@ Materials required:
 * Adafruit Feather M0 WiFi with ATWINC1500 + uFL
     (Pimoroni.com or Adafruit.com)
   * Adafruit-8-channel-PWM-or-SERVO-featherwing
-  * LiPo receiver battery min. 500mAh
+  * LiPo receiver battery min. 3,7V 500mAh
   * capacitor 500uF/10 V
   * Right-angled 4*3 pin header
   * Short Feather Male Headers - 12-pin and 16-pin Male Header Set
