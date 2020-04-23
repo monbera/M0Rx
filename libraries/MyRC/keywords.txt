@@ -19,8 +19,10 @@ soft_ctl	KEYWORD2
 fail_safe	KEYWORD2
 trim_Chan	KEYWORD2
 appendIP	KEYWORD2
+BCTel	KEYWORD2
+update_V	KEYWORD2
 update	KEYWORD2
-strtoarr	KEYWORD2
+teltoarr	KEYWORD2
 
 #######################################
 # Constants (LITERAL1)

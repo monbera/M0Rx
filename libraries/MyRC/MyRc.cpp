@@ -72,7 +72,7 @@ void config_chan_all(int *chanlst, int* *cfg_p, int *cfg){
 		}			
 }	
 
-/*Calculates the puls value (0..4065) for the pca9685 module
+/*Calculates the pulse value (0..4065) for the pca9685 module
  *tval = message input 0..254
  *[RATE] = maximal diviation (0..0.5) from the servo center puls duration 
  *[CENTER_TR] = servo center puls duration with timm adjustment 
@@ -86,6 +86,7 @@ short PcaVal (int chan, int telval, int *cfg){
 	pval = ival * FREQ * MAXPCA_I / 1000000; 		
 	return pval;
 }
+
 // Only for test		
 void set_pwm_(int chan, int on, int off) {
 	Serial.print(chan);
@@ -93,6 +94,7 @@ void set_pwm_(int chan, int on, int off) {
 	Serial.print(off);
 	Serial.println();
 	}
+	
 /* limiter to hold the input n in the range from 
  * minn to maxn
  */	
@@ -108,31 +110,36 @@ int clamp(int n, int minn, int maxn){
 	}
 
 int first = true;
+
 /* Filter function to prevent strong increasing control
  * values for acceleration by STEPW per cycle 
  * only for inputs which are > than centerpos
- */
- 
+ */ 
 int soft_ctl(int inp, int chan, int *fdat , int *cfg){
 	int da = *((cfg + chan * 8) + STEPW);
 	int centerpos = *((cfg + chan * 8) + FAILSAFE);	
 	int an = *(fdat + chan);
 	int cout = 0;
+	int REV = *((cfg + chan * 8) + REVERSE);
 	if (first == true) { 
 		an = inp; 
 		first = false;
-		}
+		}		
+	cout = inp;
 	if ((inp > centerpos) & (inp > (an + da))){
 		cout = an + da;
 		}
-	else {cout = inp;}
+	if ((inp < centerpos) & (inp < (an - da))){
+		cout = an - da;
+		}			
 	an = clamp(cout, 0, 254);
 	*(fdat + chan) = an;
 	return an;
 }
 
 
-// set all channel to the fail save position 
+/* set all channel to the fail save position 
+ */
 void fail_safe(int *cfg){
 	int fsave;
 	for (byte i = 0; i < 16; i++){
@@ -148,50 +155,70 @@ void trim_Chan (int chan, int trimval, int *cfg){
 	int newtrimmval = center * (trimval -25)/254 + center;
 	*(cfg + (chan * CFGlen) + CENTER_TR) = newtrimmval;
 }	
-		
-/*  append the numbers of the IP array to an char buffer */
-void appendIP (int *ip, char *sb){
-  	char cip[5];
-  	int eofsb = 0;
-  	eofsb = strlen(sb);
-  	for (int i = 0; i < 4; i++) {
-    	sprintf(cip, "%d", *(ip + i));
-    for (int ixp = 0; * (cip + ixp) != '\0'; ixp++) {
-      	*(sb + eofsb) = *(cip + ixp);
-      	eofsb += 1;
-    }
-    *(sb + eofsb) = '.';
-    eofsb += 1;
-  	}
-  	*(sb + eofsb - 1) = '\0';
+
+/* fills the  the default broadcast bbutter 
+ * with - STX, ID, IP, sensor dafault value, CR 
+ */
+void BCTel (char *ctab, int *ip, char *sb)
+{	*sb = '\x02';
+	*(sb + 1) = '0';
+	*(sb + 2) ='1';   
+	// appends IP 
+	for (int i = 0; i < 4; i++) {
+		*(sb + 2*i + 3) = *(ctab + *(ip+i)/16);
+		*(sb + 2*i + 4) = *(ctab + *(ip+i)%16);
+	}
+	// appends sensor value 
+	for (int i = 0; i<4 ; i++) {
+		*(sb + 11 + i) = '0';
+	}
+	*(sb + 2*3 + 9)	= '\x0D';
+	*(sb + 2*3 + 10)	= '\0';
 }
 
-/* interface for the MORx.ino 
+/* replace the sensor value with the 
+ * current measured value 
+ * ctab - CodeTable
+ * sb - buffer of the broadcast, livesign telegram
+ */
+void update_V(char *ctab, float val, char *sb)
+{	int Z = 0, F = 0; 
+	Z = (int)val;
+	F = (val*1000 - Z*1000)/10;
+	*(sb + 11 + 0) = *(ctab + Z/16);
+	*(sb + 11 + 1) = *(ctab + Z%16);
+	*(sb + 11 + 2) = *(ctab + F/16);
+	*(sb + 11 + 3) = *(ctab + F%16);	
+}
+
+/* interface for MORx.ino 
  * cb - array of received values (hdr, cha, val) 
  * fdat - temporary array for the filter function
  * cfg - overall configuration
  */
 void update(int *cb, int *fdat, int *cfg){
-	int hdr, cha, val, mod;	 
+	int hdr, cha, val, ival, mod;	 
 	for (int i = 1; i < *cb + 1; i = i+3){
 		// servo control
 		hdr = *(cb + i + HDR);
 		cha = *(cb + i + CHA);
 		val = *(cb + i + VAL);			
 		mod = *(cfg + (cha * CFGlen) + MODE);
-		//printf("%d %d %d %d " , hdr, cha, val, mod);
-		//printf("\n");	
+		
+		ival = val;
 		if (hdr == CONTROL){
 			if (*(cfg + (cha * CFGlen) + REVERSE) == true){
-				val = 254 - val;
+				ival = 254 - val;
 			}	
 			if (*(cfg + (cha * CFGlen) + ACCFILT) == true){
-				val = soft_ctl(val, cha, fdat , cfg);
+				ival = soft_ctl(ival, cha, fdat , cfg);
 			}
 			if (*(cfg + (cha * CFGlen) + MODE) == SERVO){
-				set_pwm(cha, 0, PcaVal(cha, val, cfg)); 
+				set_pwm(cha, 0, PcaVal(cha, ival, cfg)); 
 			}
 		}
+		printf("%d %d %d %d " , hdr, cha, ival, val);
+		printf("\n");	
 		// trimm control
 		if (hdr == TRIMM){
 			trim_Chan(cha, val, cfg);
@@ -199,34 +226,25 @@ void update(int *cb, int *fdat, int *cfg){
 	}
 }
 
-/* converts the incoming comma seperated char array to a int array
- * it must end with an comma
- * rb - comma separated caracters, received ftom transmitter
+/* converts the received buffer in an arrray of integer values 
+ * checks if the telegram ID is 2 
+ * rb - received from transmitter
  * cb - integrer array (cnt, hdr, cha, val, hdr, cha, val...) 
- * cnt = (length of cb) / 3
- */
-
-void strtoarr (char *rb, int *cb) {
-	  int previ = 0;
-	  int lenc = 0;
-	  int number;
-	  int factor;
-	  int cntctrbu = 0;
-	  *cb = 0;
-	  for (int i = 0; *(rb + i) != '\0'; i++) {
-		if (*(rb + i) == ',') {
-		  number = 0;
-		  factor  = 1;
-		  lenc = i - previ;
-		  factor  = 1;
-		  for (int j = 1; j <= lenc; j++) {
-		    factor  = (factor * 10);
-		    number += (*(rb + i - j) - 48) * factor / 10;
-		  }
-		  *(cb + cntctrbu + 1) = number;
-		  cntctrbu += 1;
-		  previ = i + 1;
-		  *cb = *cb + 1; 
+*/
+int teltoarr (char *rb, int *cb)
+{   int number;	
+	int cntctrbu = 0;
+	*cb = 0;
+	if (((*(rb + 1)-48)*16  +  (*(rb + 2)-48)) == 2) {
+		for (int i = 3; *(rb + i) != 13; i=i+2) {
+			if (i%2 == 1){ 
+				number = (*(rb + i)-48)*16 +  (*(rb + i + 1)-48); 
+				*(cb + cntctrbu + 1) = number;
+				cntctrbu +=1;
+				*cb +=1;	
+			}			
 		}
-  }
+	} 
+	return cntctrbu; 
 }
+
