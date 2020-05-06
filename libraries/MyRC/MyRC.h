@@ -15,7 +15,7 @@
 #include "Arduino.h"
 
 const int FREQ = 50;
-const int MAXPCA_I = 4065;
+const int MAXPCA_I = 4095;
 const int CONTROL = 255;
 const int TRIMM = 127;
 

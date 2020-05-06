@@ -151,6 +151,9 @@ void fail_safe(int *cfg){
  * trimval = 0..50 
  */
 void trim_Chan (int chan, int trimval, int *cfg){
+	if (*(cfg+(chan*CFGlen) + REVERSE) == true){
+	    trimval = 50 - trimval;
+	}	
 	int center = *(cfg + (chan * CFGlen) + CENTER);
 	int newtrimmval = center * (trimval -25)/254 + center;
 	*(cfg + (chan * CFGlen) + CENTER_TR) = newtrimmval;
