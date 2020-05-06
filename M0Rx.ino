@@ -147,6 +147,8 @@ void loop() {
     if (cntcycle > 10) {
       update_V(CodeTable, getVBAT(VBATPIN), BCBuffer);
       cntcycle = 0;
+      //long rssi = WiFi.RSSI();
+      //Serial.println(rssi);
     }
     sendTime = millis();
   }

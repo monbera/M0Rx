@@ -28,6 +28,11 @@ Folgende Komponenten sind einzulöten:
   * Elko 500 uF/10 V Durchmesser max. 8 mm auf dem PWM-Boad liegend
   * Rechtwinkliche 4*3 Stiftleiste für Kanäle 0..3 auf dem M0-Board
 
+Ein 3D Modell für ein passendes Gehäuse ist ebenfalls verfügbar.
+![3D Modell](./pic/Gehauese.png)
+
+[Dateien](./3d)
+
 Danach sind beide Boards zusammenzustecken. Man erhält einen sehr kompakten RC-Empfänger mit bis zu 8 Kanälen.
 
 
@@ -74,6 +79,10 @@ Solder the following components:
   * female connector strip on the PWM board
   * Capacitor 500 uF/10 V diameter max. 8 mm lying on the PWM board
   * Right-angled 4*3 pin header for channels 0..3 on the M0 board
+
+A 3D-construction for the housing is available too.
+
+[Files *.stl](./3d)
 
 Afterwards both boards are to be plugged together. You get a very compact RC receiver with up to 8 channels.
 

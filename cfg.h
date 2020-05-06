@@ -3,7 +3,7 @@
  * Purpose:     RC receiver with 'Cortex M0 Feather' board, WiFi 
  *              and PCA9685
  * Author:      Bernd Hinze
- * github		https://github.com/monbera/M0Rx
+ * github		    https://github.com/monbera/M0Rx
  * Created:     25.02.2020
  * Copyright:   (c) Bernd Hinze 2020
  * Licence:     MIT see https://opensource.org/licenses/MIT
@@ -21,7 +21,7 @@
 // Debug with serial (USB) interface
 #define NODEBUG
 // ID for the model
-#define Testbed
+#define Boat
 
 /*
  * Parameter for channel configuration 
@@ -38,15 +38,15 @@
 
 #ifdef MyCar
 //MODE, CENTER, RATE, REVERSE, ACCFILT, FAILSAFE, STEPW,
-int Cdat0[7] = { SERVO, 1500, 500, false, true, 127, 10};  // ESC Controller TBS02 
+int Cdat0[7] = { SERVO, 1500, 500, true, true, 127, 10};  // ESC Controller TBS02 
 int Cdat3[7] = { SERVO, 1500, 200, false, false, 127, 127}; // SERVO
 int CHcfg[2] = {0, 3};  // used channels
 int * CHcfg_P[2] = {Cdat0, Cdat3};  // list of pointer to the configuration array
 #endif
 
 #ifdef Boat
-int Cdat0[7] = { SERVO, 1400, 400, false, true, 127, 10};   // ESC Controller PULSTEC
-int Cdat3[7] = { SERVO, 1500, 500, false, false, 127, 127}; // SERVO
+int Cdat0[7] = { SERVO, 1500, 500, false, true, 127, 10};   // ESC Controller PULSTEC
+int Cdat3[7] = { SERVO, 1500, 400, true, false, 127, 127}; // SERVO
 int CHcfg[2] = {0, 3};
 int * CHcfg_P[2] = {Cdat0, Cdat3};
 #endif
@@ -58,6 +58,5 @@ int Cdat3[7] = { SERVO, 1500, 500, false, false, 127, 127}; // SERVO
 int CHcfg[3] = {0, 2, 3 };
 int * CHcfg_P[3] = {Cdat0, Cdat2, Cdat3};
 #endif 
-
 
 #endif
